@@ -1,0 +1,24 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.topbar h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.filter-btn {
+  background-color: #e7e5ff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  background-color: #d9d6ff;
+}
