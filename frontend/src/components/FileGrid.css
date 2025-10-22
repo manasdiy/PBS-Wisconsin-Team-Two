@@ -1,0 +1,41 @@
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 25px;
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.file-card {
+  background-color: #f4f1ff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  height: 180px;
+}
+
+.file-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.file-thumbnail {
+  background-color: #d7d2ff;
+  height: 100px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.file-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #222;
+}
+
+.file-info p {
+  font-size: 0.85rem;
+  color: #666;
+}

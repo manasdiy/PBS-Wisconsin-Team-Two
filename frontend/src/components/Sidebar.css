@@ -1,0 +1,31 @@
+.sidebar {
+  width: 200px;
+  background-color: #f6f4ff;
+  padding: 25px 15px;
+  border-right: 1px solid #ddd;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.sidebar-title {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.sidebar-links {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-links li {
+  margin-bottom: 12px;
+  cursor: pointer;
+  color: #4a3aff;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.sidebar-links li:hover {
+  color: #2c1aff;
+}
