@@ -1,6 +1,61 @@
+.app {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #ffffff;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background-color: #ffffff;
+  width: calc(100vw - 200px);
+}
+
+.page-header {
+  padding: 40px 60px 20px 60px;
+}
+
+.page-header h1 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #222;
+  margin: 0 0 20px 0;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-btn {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+  background-color: #e9e9e9;
+}
+
+.filter-btn.active {
+  background-color: #e6e0ff;
+  border-color: #4a3aff;
+  color: #4a3aff;
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .app {
     flex-direction: column;
+    width: 100vw;
   }
 
   .sidebar {
@@ -14,13 +69,35 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 40px;
     overflow-y: auto;
     background-color: #ffffff;
+    width: 100%;
   }
 
+  .page-header {
+    padding: 30px 30px 20px 30px;
+  }
+
+  .filter-buttons {
+    gap: 8px;
+  }
+
+  .filter-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
 
   .file-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .file-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    padding: 35px 50px;
   }
 }
