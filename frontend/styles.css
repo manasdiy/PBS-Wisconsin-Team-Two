@@ -1,0 +1,290 @@
+/* ===========================
+   PBS Wisconsin Editor — Upload
+   Cleaned from Figma CSS for direct use
+   Top browser bar removed on purpose
+   Expected HTML: homepage.html from earlier
+   =========================== */
+
+/* ---- Base / Artboard ---- */
+:root{
+    --bg:#FFFFFF;
+    --text:#0F0F0F;
+    --muted:#676767;
+    --outline:#49454F;
+    --rail-width:72px;
+  
+    --primary:#483EA8;                 /* purple from Figma vectors */
+    --primary-weak:#EADDFF;            /* M3/sys/light/primary-container */
+    --secondary-container:#E8DEF8;     /* M3/sys/light/secondary-container */
+    --surface:#F8F8FF;                 /* upload card bg */
+  
+    --drop-border: rgba(56,78,183,0.30);
+    --shadow-1: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  
+  *{ box-sizing: border-box; }
+  html, body { height: 100%; }
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Mulish','Roboto', system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+  }
+  
+  /* Layout: left rail + main */
+  .artboard{
+    display: grid;
+    grid-template-columns: var(--rail-width) 1fr;
+    grid-template-rows: 1fr;
+    min-height: 100dvh;
+  }
+  
+  /* ===========================
+     Navigation Rail (left)
+     =========================== */
+  .navigation-rail{
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    padding: 44px 0 56px;
+    width: var(--rail-width);
+    border-right: 1px solid #f0f0f0;
+  }
+  
+  /* Menu & Fab group */
+  .menu-and-fab{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 56px;
+    height: auto;
+  }
+  .icon-button{
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border: none;
+    background: transparent;
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--outline);
+  }
+  .fab{
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 16px;
+    background: var(--primary-weak);
+    color: #4F378A; /* on-primary-container */
+    cursor: pointer;
+  }
+  
+  /* Segments (destinations) */
+  .segments{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: var(--rail-width);
+  }
+  .nav-item{
+    width: var(--rail-width);
+    height: 80px;
+    padding: 6px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+  }
+  .icon-container{
+    width: 56px;
+    height: 32px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+  }
+  .nav-item--active .icon-container{
+    background: var(--secondary-container);
+  }
+  .nav-item .icon{
+    width: 24px;
+    height: 24px;
+    color: #4A4459; /* on-secondary-container for active, default ok */
+  }
+  .label-text{
+    width: var(--rail-width);
+    height: 32px;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: .5px;
+    color: #49454F; /* on-surface-variant */
+  }
+  .nav-item--active .label-text{
+    color: #625B71; /* secondary */
+  }
+  
+  /* ===========================
+     Main content
+     =========================== */
+  .main{
+    grid-column: 2;
+    display: grid;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    align-content: start;
+    row-gap: 24px;
+    padding: 96px 16px 32px; /* creates similar spacing as Figma positions */
+  }
+  
+  /* Heading - Upload */
+  .heading-upload{
+    display: flex;
+    align-items: flex-start;
+    padding: 0 10px;
+    height: 28px;
+  }
+  .heading-text{
+    margin: 0;
+    width: 96px; height: 28px;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 28px; /* identical to box height */
+    text-align: center;
+    color: var(--text);
+  }
+  
+  /* Upload file area (card) */
+  .upload-file-area{
+    width: 100%;
+    display: grid;
+    place-items: center;
+  }
+  .upload-file-background{
+    box-sizing: border-box;
+    width: 445px;
+    height: 427px;
+    background: var(--surface);
+    border: 1px dashed var(--drop-border);
+    border-radius: 4px;
+    box-shadow: var(--shadow-1);
+    position: relative;
+  
+    /* Center inner content roughly like Figma absolute positions */
+    display: grid;
+    grid-template-rows: 1fr auto auto 1fr;
+    justify-items: center;
+    align-items: center;
+    padding: 24px;
+  }
+  
+  /* Upload icon */
+  .upload-icon{
+    color: var(--primary);
+  }
+  
+  /* Drag & drop line */
+  .drag-drop-line{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    height: 34px;
+  }
+  .drag-drop-text{
+    margin: 0;
+    width: 211px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--text);
+  }
+  .drag-drop-text .browse{
+    text-decoration: underline;
+    color: var(--primary);
+  }
+  
+  /* Supported formats line */
+  .supported-formats-line{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    height: 28px;
+  }
+  .supported-formats-text{
+    margin: 0;
+    width: 373px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--muted);
+  }
+  
+  /* CTA */
+  .cta{
+    width: 100%;
+    display: grid;
+    place-items: center;
+  }
+  .cta-button{
+    width: 445px;
+    height: 45px;
+    border: none;
+    border-radius: 4px;
+    background: var(--primary);
+    opacity: .5;            /* matches Figma’s 0.5 initial opacity */
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-family: 'Mulish', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+    letter-spacing: .2px;
+    cursor: pointer;
+  }
+  
+  /* ---------------------------
+     Accessibility helper (if not already present)
+     --------------------------- */
+  .sr-only{
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,1px,1px);
+    white-space: nowrap; border: 0;
+  }
+  
+  /* ---------------------------
+     Responsive: hide rail on small screens (optional)
+     --------------------------- */
+  @media (max-width: 840px){
+    .artboard{
+      grid-template-columns: 1fr;
+    }
+    .navigation-rail{
+      display: none;
+    }
+    .upload-file-background{
+      width: min(445px, 92vw);
+    }
+    .cta-button{
+      width: min(445px, 92vw);
+    }
+  }
+  
