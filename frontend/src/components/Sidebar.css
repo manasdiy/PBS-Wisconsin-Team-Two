@@ -1,31 +1,69 @@
+/* Sidebar Container */
 .sidebar {
-  width: 200px;
-  background-color: #f6f4ff;
-  padding: 25px 15px;
-  border-right: 1px solid #ddd;
-  height: 100vh;
-  box-sizing: border-box;
+  height: 100%;
+  width: 0; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #f8f5fa; /* light lavender tone */
+  overflow-x: hidden;
+  transition: width 0.3s ease;
+  padding-top: 60px;
+  border-right: 1px solid #dcd3f0;
+  z-index: 1000;
 }
 
-.sidebar-title {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
-  color: #222;
+/* Sidebar open state */
+.sidebar.open {
+  width: 250px;
 }
 
-.sidebar-links {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar-links li {
-  margin-bottom: 12px;
-  cursor: pointer;
-  color: #4a3aff;
+/* Sidebar links */
+.sidebar a {
+  display: block;
+  padding: 14px 28px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #3b2f5c; /* dark purple text */
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: background-color 0.2s, padding-left 0.2s;
 }
 
-.sidebar-links li:hover {
-  color: #2c1aff;
+.sidebar a:hover {
+  background-color: #e8e1f7;
+  padding-left: 34px; /* slight shift on hover */
 }
+
+/* Hamburger button (☰) */
+.menu-btn {
+  font-size: 28px;
+  cursor: pointer;
+  margin: 16px;
+  color: #3b2f5c;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.menu-btn:hover {
+  transform: scale(1.1);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;      /* raise it closer to top edge */
+  right: 20px;    /* move slightly inward from the right */
+  font-size: 32px;
+  font-weight: bold;
+  color: #3b2f5c; /* dark purple for contrast */
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 2000;  /* ensures it stays above other elements */
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #6a4fb3; /* lighter purple on hover */
+  transform: scale(1.2);
+}
+
