@@ -1,6 +1,8 @@
+import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 import FileGrid from "./components/FileGrid";
+import EditPage from "./pages/EditPage";
 import "./App.css";
 
 export default function App() {
@@ -9,7 +11,10 @@ export default function App() {
       <Sidebar />
       <div className="main-content">
         <Topbar />
-        <FileGrid />
+        <Routes>
+          <Route path="/" element={<FileGrid />} />
+          <Route path="/edit" element={<EditPage />} />
+        </Routes>
       </div>
     </div>
   );
