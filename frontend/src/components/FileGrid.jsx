@@ -1,6 +1,10 @@
 import "./FileGrid.css";
+import Topbar from "./Topbar.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function FileGrid({ currentPage }) {
+  const navigate = useNavigate();
+
   const finishedFiles = [
     { name: "Video Segment 3", edited: "Edited today" },
     { name: "Song 3", edited: "Edited yesterday" },
@@ -44,18 +48,25 @@ export default function FileGrid({ currentPage }) {
   const files = getFilesForPage();
 
   return (
-    <div className="file-grid">
-      {files.map((file, i) => (
-        <div className="file-card" key={i}>
-          <div className="file-thumbnail">
-            <div className="file-icon">📄</div>
-          </div>
-          <div className="file-info">
-            <h3>{file.name}</h3>
-            <p>{file.edited}</p>
-          </div>
-        </div>
-      ))}
+    <div className="file-grid-container">
+      <Topbar currentPage={currentPage} />
+      <div className="file-grid">
+        {files.map((file, i) => (
+          <button
+            className="file-card"
+            key={i}
+            onClick={() => navigate("/edit")}
+          >
+            <div className="file-thumbnail">
+              <div className="file-icon">📄</div>
+            </div>
+            <div className="file-info">
+              <h3>{file.name}</h3>
+              <p>{file.edited}</p>
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

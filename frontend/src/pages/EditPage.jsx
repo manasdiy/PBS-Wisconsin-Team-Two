@@ -4,7 +4,6 @@ import "./EditPage.css";
 export default function EditPage() {
   return (
     <div className="edit-page">
-      <Sidebar />
 
       <div className="edit-main">
         <h1>Edit Page</h1>
