@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import "./Sidebar.css";
 
 const Sidebar = () => {
@@ -33,3 +32,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+}
