@@ -1,34 +1,33 @@
 import React, { useState } from "react";
 import "./Sidebar.css";
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
+export default function Sidebar({ currentPage, onPageChange }) {
+  const menuItems = [
+    { id: "finished", label: "Finished Files", icon: "★" },
+    { id: "in-progress", label: "In Progress", icon: "★" },
+    { id: "deleted", label: "Recently Deleted", icon: "★" }
+  ];
 
   return (
-    <>
-      {/* Hamburger icon */}
-      <span className="menu-btn" onClick={() => setIsOpen(true)}>
-        ☰
-      </span>
-
-      {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        <button className="close-btn" onClick={() => setIsOpen(false)}>
-          ×
-        </button>
-
-        {/* Navigation links */}
-        <a href="/home.html" onClick={() => setIsOpen(false)}>
-          Home
-        </a>
-        <a href="/finished.html" onClick={() => setIsOpen(false)}>
-          Finished Files
-        </a>
-        <a href="/editing.html" onClick={() => setIsOpen(false)}>
-          Editing Page
-        </a>
+    <div className="sidebar">
+      <div className="sidebar-header">
+        <div className="hamburger-menu">☰</div>
+        <div className="edit-button">✏️</div>
       </div>
-    </>
+      
+      <nav className="sidebar-nav">
+        {menuItems.map((item) => (
+          <div
+            key={item.id}
+            className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
+            onClick={() => onPageChange(item.id)}
+          >
+            <div className="nav-icon">{item.icon}</div>
+            <span className="nav-label">{item.label}</span>
+          </div>
+        ))}
+      </nav>
+    </div>
   );
 };
 
