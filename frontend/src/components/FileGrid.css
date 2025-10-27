@@ -1,8 +1,19 @@
+/* Container for Topbar + grid */
+.file-grid-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  background-color: #ffffff;
+  overflow-y: auto;
+}
+
+/* File grid */
 .file-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 40px;
-  padding: 40px 60px;
+  padding: 20px 60px 40px 60px;
   flex-grow: 1;
   overflow-y: auto;
   max-width: 100%;
@@ -90,16 +101,8 @@
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.file-icon {
-  display: none;
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .file-info {
@@ -117,4 +120,40 @@
 .file-info p {
   font-size: 0.8rem;
   color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .file-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    padding: 20px 50px 40px 50px;
+  }
+}
+
+@media (max-width: 900px) {
+  .file-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    padding: 20px 30px 40px 30px;
+  }
+}
+
+/* File card as button */
+.file-card {
+  background-color: transparent;
+  border: none;        /* remove border */
+  outline: none;       /* remove default outline */
+  padding: 0;
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;     /* show pointer on hover */
+  transition: transform 0.3s ease;
+}
+
+.file-card:focus {
+  outline: none;       /* ensure no focus outline appears */
 }

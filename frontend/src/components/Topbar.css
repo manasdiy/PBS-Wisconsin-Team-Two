@@ -1,9 +1,9 @@
 .topbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* centers title horizontally */
   align-items: center;
   margin-bottom: 20px;
-  padding: 0 20px;
+  padding: 10px 20px 0 20px; /* added padding-top for spacing */
 }
 
 .topbar h1 {
@@ -16,6 +16,8 @@
 .filter-buttons {
   display: flex;
   gap: 10px;
+  position: absolute; /* keep buttons on the right */
+  right: 20px;
 }
 
 .filter-btn {
