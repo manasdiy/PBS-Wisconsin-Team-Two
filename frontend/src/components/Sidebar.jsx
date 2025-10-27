@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import "./Sidebar.css";
 
 export default function Sidebar({ currentPage, onPageChange }) {
@@ -28,4 +29,6 @@ export default function Sidebar({ currentPage, onPageChange }) {
       </nav>
     </div>
   );
-}
+};
+
+export default Sidebar;

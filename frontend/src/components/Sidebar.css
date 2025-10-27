@@ -1,3 +1,4 @@
+/* Sidebar Container */
 .sidebar {
   width: 200px;
   background-color: #f6f4ff;
@@ -93,3 +94,9 @@
   color: #4a3aff;
   font-weight: 600;
 }
+
+.close-btn:hover {
+  color: #6a4fb3; /* lighter purple on hover */
+  transform: scale(1.2);
+}
+
