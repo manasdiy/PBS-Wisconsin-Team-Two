@@ -1,4 +1,6 @@
 import Sidebar from "../components/Sidebar";
+import { useNavigate } from "react-router-dom";
+
 import "./EditPage.css";
 
 export default function EditPage() {

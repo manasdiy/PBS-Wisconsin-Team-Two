@@ -42,7 +42,7 @@ export default function HomePage() {
 
           <div className="supported-formats-line">
             <p className="supported-formats-text">
-              Supported formats: JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT
+              Supported formats: MP3, WAV
             </p>
           </div>
         </div>
