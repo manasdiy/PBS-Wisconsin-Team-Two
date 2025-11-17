@@ -1,7 +1,49 @@
-// HomePage.jsx
+// pages/HomePage.jsx
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 
 export default function HomePage() {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      setSelectedFile(file);
+    } else {
+      alert('Please select an audio file');
+    }
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      setSelectedFile(file);
+    } else {
+      alert('Please select an audio file');
+    }
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleBrowseClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleUpload = () => {
+    if (selectedFile) {
+      // Navigate to editing page with the file
+      navigate('/edit', { state: { file: selectedFile } });
+    } else {
+      alert('Please select a file first');
+    }
+  };
+
   return (
     <div className="home-main">
       {/* Heading */}
@@ -15,7 +57,11 @@ export default function HomePage() {
           Upload file area
         </h2>
 
-        <div className="upload-file-background">
+        <div
+          className="upload-file-background"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
           <div className="upload-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="56" height="56" fill="none" aria-hidden="true">
               <path
@@ -36,21 +82,41 @@ export default function HomePage() {
           <div className="drag-drop-line">
             <p className="drag-drop-text">
               <strong>Drag &amp; drop files</strong>&nbsp;or&nbsp;
-              <span className="browse">Browse</span>
+              <span className="browse" onClick={handleBrowseClick}>
+                Browse
+              </span>
             </p>
           </div>
 
           <div className="supported-formats-line">
             <p className="supported-formats-text">
-              Supported formats: JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT
+              Supported formats: MP3, WAV, OGG, AAC
             </p>
           </div>
+
+          {selectedFile && (
+            <div className="selected-file">
+              <p>Selected: {selectedFile.name}</p>
+            </div>
+          )}
         </div>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="audio/*"
+          onChange={handleFileSelect}
+          style={{ display: 'none' }}
+        />
       </section>
 
       {/* CTA */}
       <div className="cta">
-        <button className="cta-button" type="button">
+        <button
+          className="cta-button"
+          type="button"
+          onClick={handleUpload}
+        >
           <span className="label">Upload Files</span>
         </button>
       </div>
