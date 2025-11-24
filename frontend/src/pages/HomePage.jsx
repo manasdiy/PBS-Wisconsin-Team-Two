@@ -5,44 +5,42 @@ import "./HomePage.css";
 
 export default function HomePage() {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadMessage, setUploadMessage] = useState("");
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
-  // Handle file selection
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-    setUploadMessage("");
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      setSelectedFile(file);
+    } else {
+      alert('Please select an audio file');
+    }
   };
 
-  // Handle upload to FastAPI backend
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setUploadMessage("Please select a file first.");
-      return;
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      setSelectedFile(file);
+    } else {
+      alert('Please select an audio file');
     }
+  };
 
-    const formData = new FormData();
-    formData.append("file", selectedFile);
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
 
-    setIsUploading(true);
-    setUploadMessage("");
+  const handleBrowseClick = () => {
+    fileInputRef.current.click();
+  };
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/upload/", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        setUploadMessage("✅ File uploaded successfully!");
-      } else {
-        setUploadMessage("❌ Upload failed.");
-      }
-    } catch (error) {
-      console.error("Upload error:", error);
-      setUploadMessage("⚠️ Error connecting to server.");
-    } finally {
-      setIsUploading(false);
+  const handleUpload = () => {
+    if (selectedFile) {
+      // Navigate to editing page with the file
+      navigate('/edit', { state: { file: selectedFile } });
+    } else {
+      alert('Please select a file first');
     }
   };
 
@@ -63,12 +61,6 @@ export default function HomePage() {
           className="upload-file-background"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const file = e.dataTransfer.files[0];
-            setSelectedFile(file);
-          }}
         >
           <div className="upload-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" width="56" height="56" fill="none" aria-hidden="true">
@@ -93,18 +85,8 @@ export default function HomePage() {
               <span className="browse" onClick={handleBrowseClick}>
                 Browse
               </span>
-              <label htmlFor="file-upload" className="browse">
-                Browse
-              </label>
             </p>
           </div>
-
-          <input
-            id="file-upload"
-            type="file"
-            onChange={handleFileChange}
-            style={{ display: "none" }}
-          />
 
           <div className="supported-formats-line">
             <p className="supported-formats-text">
@@ -116,9 +98,6 @@ export default function HomePage() {
             <div className="selected-file">
               <p>Selected: {selectedFile.name}</p>
             </div>
-            <p style={{ fontSize: "14px", marginTop: "10px", color: "#483EA8" }}>
-              Selected: {selectedFile.name}
-            </p>
           )}
         </div>
 
@@ -137,17 +116,9 @@ export default function HomePage() {
           className="cta-button"
           type="button"
           onClick={handleUpload}
-          disabled={isUploading}
         >
-          <span className="label">
-            {isUploading ? "Uploading..." : "Upload Files"}
-          </span>
+          <span className="label">Upload Files</span>
         </button>
-        {uploadMessage && (
-          <p style={{ marginTop: "10px", color: "#555", fontWeight: 500 }}>
-            {uploadMessage}
-          </p>
-        )}
       </div>
     </div>
   );
