@@ -20,13 +20,14 @@
   flex-direction: column;
   align-items: center;
 }
+
 .upload-file-background {
   width: 445px;
   height: 427px;
   background: #f8f8ff;
-  border: 1px dashed rgba(56,78,183,0.3);
+  border: 1px dashed rgba(56, 78, 183, 0.3);
   border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
   display: grid;
   grid-template-rows: 1fr auto auto 1fr;
   justify-items: center;
@@ -46,12 +47,14 @@
   align-items: center;
   justify-content: center;
 }
+
 .drag-drop-text {
   font-family: 'Mulish', sans-serif;
   font-weight: 700;
   font-size: 16px;
   color: #222;
 }
+
 .drag-drop-text .browse {
   text-decoration: underline;
   color: #483EA8;
@@ -64,6 +67,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .supported-formats-text {
   font-family: 'Mulish', sans-serif;
   font-weight: 400;
@@ -90,10 +94,14 @@
 /* Accessibility helper */
 .sr-only {
   position: absolute !important;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0,0,1px,1px);
-  white-space: nowrap; border: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 1px, 1px);
+  white-space: nowrap;
+  border: 0;
 }
 
 .heading-upload {
