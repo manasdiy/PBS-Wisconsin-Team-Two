@@ -10,7 +10,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; 
+  justify-content: space-between;
 }
 
 .edit-main h1 {
@@ -29,7 +29,7 @@
 .edit-controls {
   display: flex;
   gap: 12px;
-  justify-content: flex-end; 
+  justify-content: flex-end;
 }
 
 .save-btn,
@@ -67,4 +67,128 @@
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* pages/EditPage.css */
+.edit-page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.edit-header {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 30px;
+}
+
+.edit-title {
+  font-size: 48px;
+  font-weight: 700;
+  color: #333333;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.file-name-display {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.file-name-text {
+  font-size: 20px;
+  color: #8b7ba8;
+  margin: 0;
+  font-weight: 500;
+}
+
+.waveform-section {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 40px;
+}
+
+.waveform-container {
+  background-color: #f4f1ff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e7e5ff;
+}
+
+.waveform-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.time-display {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #8b7ba8;
+  font-weight: 500;
+}
+
+.audio-controls {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pause-button {
+  padding: 18px 80px;
+  background-color: #b4a5d6;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(180, 165, 214, 0.3);
+  text-transform: uppercase;
+}
+
+.pause-button:hover {
+  background-color: #9d8bc4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(180, 165, 214, 0.4);
+}
+
+.pause-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(180, 165, 214, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .edit-title {
+    font-size: 36px;
+  }
+
+  .file-name-text {
+    font-size: 16px;
+  }
+
+  .waveform-container {
+    padding: 20px;
+  }
+
+  .pause-button {
+    padding: 15px 60px;
+    font-size: 18px;
+  }
 }

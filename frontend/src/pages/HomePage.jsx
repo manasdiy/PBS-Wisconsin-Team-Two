@@ -1,5 +1,7 @@
+// pages/HomePage.jsx
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
-import { useState } from "react";
 
 export default function HomePage() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -59,6 +61,8 @@ export default function HomePage() {
 
         <div
           className="upload-file-background"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
@@ -86,6 +90,9 @@ export default function HomePage() {
           <div className="drag-drop-line">
             <p className="drag-drop-text">
               <strong>Drag &amp; drop files</strong>&nbsp;or&nbsp;
+              <span className="browse" onClick={handleBrowseClick}>
+                Browse
+              </span>
               <label htmlFor="file-upload" className="browse">
                 Browse
               </label>
@@ -101,16 +108,27 @@ export default function HomePage() {
 
           <div className="supported-formats-line">
             <p className="supported-formats-text">
-              Supported formats: JPEG, PNG, GIF, MP4, PDF, PSD, AI, Word, PPT
+              Supported formats: MP3, WAV, OGG, AAC
             </p>
           </div>
 
           {selectedFile && (
+            <div className="selected-file">
+              <p>Selected: {selectedFile.name}</p>
+            </div>
             <p style={{ fontSize: "14px", marginTop: "10px", color: "#483EA8" }}>
               Selected: {selectedFile.name}
             </p>
           )}
         </div>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="audio/*"
+          onChange={handleFileSelect}
+          style={{ display: 'none' }}
+        />
       </section>
 
       {/* CTA */}
