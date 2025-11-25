@@ -49,6 +49,8 @@
 
 .save-btn:hover {
   background-color: #372bff;
+  display: flex;
+  flex-direction: column;
   transform: translateY(-2px);
 }
 
@@ -114,17 +116,48 @@
   margin-bottom: 40px;
 }
 
+.waveform-layout {
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  /* ensure both sides are equal height */
+}
+
 .waveform-container {
   background-color: #f4f1ff;
   border-radius: 16px;
   padding: 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   border: 2px solid #e7e5ff;
+  flex: 2 1 0%;
+  /* take remaining space */
+  min-width: 0;
+  /* allow flex shrink to prevent overflow */
+  max-width: calc(100% - 340px);
+  /* reserve space for log box */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* keep internal overflow from expanding layout */
+}
+
+.waveform-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
+  height: 300px;
+  /* lock height to match log-box */
+  display: block;
+  flex: 1 1 auto;
+  box-sizing: border-box;
 }
 
 .waveform-canvas {
-  width: 100%;
-  height: auto;
+  width: auto;
+  /* controlled by JS (full virtual width) */
+  height: 300px;
   display: block;
   border-radius: 8px;
   cursor: pointer;
@@ -145,6 +178,75 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
+}
+
+.log-container {
+  flex: 0 0 320px;
+  /* keep a fixed-ish width on the right */
+  background-color: #f4f1ff;
+  padding: 30px;
+  /* match waveform padding */
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e7e5ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: fit-content;
+}
+
+.log-container h3 {
+  margin: 0 0 8px 0;
+  color: #5d4b7f;
+}
+
+.log-box {
+  height: 300px;
+  /* match canvas height */
+  overflow-y: auto;
+  background: rgba(180, 165, 214, 0.08);
+  padding: 12px;
+  border-radius: 10px;
+  color: #362b4e;
+}
+
+/* Scrollbar styling for WebKit browsers (Chrome, Safari, Edge) */
+.waveform-scroll::-webkit-scrollbar,
+.log-box::-webkit-scrollbar {
+  height: 10px;
+  /* horizontal scroll for waveform */
+  width: 10px;
+  /* vertical scroll for log */
+}
+
+.waveform-scroll::-webkit-scrollbar-track,
+.log-box::-webkit-scrollbar-track {
+  background: #e7e5ff;
+  /* soft light-purple track */
+  border-radius: 10px;
+}
+
+.waveform-scroll::-webkit-scrollbar-thumb,
+.log-box::-webkit-scrollbar-thumb {
+  background-color: #9d8bc4;
+  /* requested color */
+  border-radius: 10px;
+  border: 2px solid #e7e5ff;
+  /* padding effect */
+}
+
+.waveform-scroll::-webkit-scrollbar-thumb:hover,
+.log-box::-webkit-scrollbar-thumb:hover {
+  background-color: #7f6fb7;
+  /* slightly darker on hover */
+}
+
+/* Firefox scrollbar styling */
+.waveform-scroll,
+.log-box {
+  scrollbar-width: thin;
+  scrollbar-color: #9d8bc4 #e7e5ff;
+  /* thumb color, track color */
 }
 
 .pause-button {
@@ -185,6 +287,15 @@
 
   .waveform-container {
     padding: 20px;
+  }
+
+  /* On mobile, reduce the canvas width so the scroll doesn't feel overwhelming */
+  /* mobile: leave width auto; JS will set canvas width to something appropriate */
+
+  .waveform-canvas {
+    width: auto;
+    /* canvas width controlled via JS */
+    height: 300px;
   }
 
   .pause-button {

@@ -7,6 +7,7 @@ export default function EditPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const canvasRef = useRef(null);
+  const waveformScrollRef = useRef(null);
   const audioRef = useRef(null);
   const animationRef = useRef(null);
   const audioBufferRef = useRef(null); // Store the audio buffer
@@ -31,6 +32,8 @@ export default function EditPage() {
     return () => URL.revokeObjectURL(url);
   }, [location, navigate]);
 
+  const PIXELS_PER_SECOND = 200; // canvas width scale - tuneable
+
   useEffect(() => {
     if (!audioUrl) return;
 
@@ -43,6 +46,22 @@ export default function EditPage() {
       .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
       .then(audioBuffer => {
         audioBufferRef.current = audioBuffer; // Store for later use
+
+        // detect long-silence regions
+        const silentRegions = findSilenceRegions(audioBuffer, 0.01, 1.2);
+        audioBufferRef.current.silenceRegions = silentRegions;
+
+        // compute proportional canvas width based on audio duration and clamp it
+        const MAX_CANVAS_WIDTH = 2400; // prevents extremely wide canvases that push layout
+        const desiredWidth = Math.max(1200, Math.min(Math.ceil(audioBuffer.duration * PIXELS_PER_SECOND), MAX_CANVAS_WIDTH));
+        canvas.width = desiredWidth;
+        canvas.height = 300;
+        // Make the canvas virtual drawing buffer big, but set the CSS width to the DOM to desiredWidth
+        // so that the `.waveform-scroll` can contain it and show a horizontal scrollbar.
+        canvas.style.width = `${desiredWidth}px`;
+        canvas.style.height = `300px`;
+        // ensure we start scrolled to the beginning
+        if (waveformScrollRef.current) waveformScrollRef.current.scrollLeft = 0;
         drawWaveform(audioBuffer, canvas, canvasContext);
       })
       .catch(error => console.error('Error loading audio:', error));
@@ -123,6 +142,22 @@ export default function EditPage() {
         cancelAnimationFrame(animationRef.current);
       }
     };
+
+    // AUTO-SCROLL: keep playhead centered (or as close as possible) while playing
+    if (isPlaying) {
+      const container = waveformScrollRef.current;
+      if (container) {
+        const visibleWidth = container.clientWidth;
+        const maxScrollLeft = container.scrollWidth - visibleWidth;
+        let targetScrollLeft = lineX - (visibleWidth / 2);
+        if (targetScrollLeft < 0) targetScrollLeft = 0;
+        if (targetScrollLeft > maxScrollLeft) targetScrollLeft = maxScrollLeft;
+        // update only if it's noticeably different to avoid janky small updates
+        if (Math.abs(container.scrollLeft - targetScrollLeft) > 1) {
+          container.scrollLeft = targetScrollLeft;
+        }
+      }
+    }
   }, [currentTime, duration, isPlaying]);
 
   const drawWaveform = (audioBuffer, canvas, context) => {
@@ -169,6 +204,47 @@ export default function EditPage() {
     context.stroke();
     context.fillStyle = 'rgba(180, 165, 214, 0.2)';
     context.fill();
+
+    if (audioBuffer.silenceRegions) {
+      context.fillStyle = 'rgba(255, 0, 0, 0.35)';
+
+      audioBuffer.silenceRegions.forEach(region => {
+        const startX = (region.startTime / audioBuffer.duration) * canvas.width;
+        const endX = (region.endTime / audioBuffer.duration) * canvas.width;
+        const w = endX - startX;
+
+        context.fillRect(startX, 0, w, canvas.height);
+      });
+    }
+  };
+
+  const findSilenceRegions = (audioBuffer, silenceThreshold = 0.01, minSilenceSecs = 1.2) => {
+    const data = audioBuffer.getChannelData(0);
+    const sampleRate = audioBuffer.sampleRate;
+
+    const minSamples = Math.floor(minSilenceSecs * sampleRate);
+
+    let silenceRegions = [];
+    let idx = 0;
+
+    while (idx < data.length) {
+      if (Math.abs(data[idx]) < silenceThreshold) {
+        const start = idx;
+        while (idx < data.length && Math.abs(data[idx]) < silenceThreshold) {
+          idx++;
+        }
+        const duration = idx - start;
+        if (duration >= minSamples) {
+          silenceRegions.push({
+            startTime: start / sampleRate,
+            endTime: idx / sampleRate,
+          });
+        }
+      }
+      idx++;
+    }
+
+    return silenceRegions;
   };
 
   const togglePlayPause = () => {
@@ -186,10 +262,13 @@ export default function EditPage() {
     const canvas = canvasRef.current;
     const audio = audioRef.current;
     if (!canvas || !audio || !duration) return;
-
     const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const progress = x / canvas.width;
+    // get scroll container so we can account for horizontal scrolling
+    const scrollContainer = waveformScrollRef.current;
+    const xVisible = e.clientX - rect.left; // position inside visible viewport
+    const xAbsolute = xVisible + (scrollContainer ? scrollContainer.scrollLeft : 0);
+    // Use scrollWidth to compute progress (both in DOM pixels)
+    const progress = xAbsolute / (scrollContainer ? scrollContainer.scrollWidth : rect.width);
     audio.currentTime = progress * duration;
   };
 
@@ -213,20 +292,31 @@ export default function EditPage() {
 
       {/* Waveform */}
       <div className="waveform-section">
-        <div className="waveform-container">
-          <canvas
-            ref={canvasRef}
-            width={1200}
-            height={300}
-            className="waveform-canvas"
-            onClick={handleCanvasClick}
-          />
-          <div className="time-display">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
+        <div className="waveform-layout">
+
+          <div className="waveform-container">
+            <div className="waveform-scroll" ref={waveformScrollRef}>
+              <canvas
+                ref={canvasRef}
+                className="waveform-canvas"
+                onClick={handleCanvasClick}
+              />
+            </div>
+
+            <div className="time-display">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
           </div>
+
+          <div className="log-container">
+            <h3>Log</h3>
+            <div className="log-box" id="logBox"></div>
+          </div>
+
         </div>
       </div>
+
 
       {/* Pause button */}
       <div className="audio-controls">
