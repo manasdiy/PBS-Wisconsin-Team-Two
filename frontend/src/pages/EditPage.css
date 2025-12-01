@@ -210,11 +210,38 @@
   color: #362b4e;
 }
 
+.log-box .log-entry {
+  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
+.log-box .log-entry.log-silence {
+  background: rgba(255, 0, 0, 0.06);
+  color: #7a1f1f;
+  border-left: 3px solid rgba(255, 0, 0, 0.4);
+}
+
+.log-box .log-entry.log-too-loud {
+  background: rgba(255, 165, 0, 0.06);
+  color: #7a4a1f;
+  border-left: 3px solid rgba(255, 165, 0, 0.6);
+}
+
 /* Scrollbar styling for WebKit browsers (Chrome, Safari, Edge) */
 .waveform-scroll::-webkit-scrollbar,
 .log-box::-webkit-scrollbar {
   height: 10px;
   /* horizontal scroll for waveform */
+
+  .log-box .log-entry.log-click {
+    background: rgba(0, 0, 0, 0.06);
+    color: #1f1f1f;
+    border-left: 3px solid rgba(0, 0, 0, 0.6);
+  }
+
   width: 10px;
   /* vertical scroll for log */
 }
