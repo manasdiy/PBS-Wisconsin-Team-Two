@@ -8,6 +8,7 @@ export default function EditPage() {
   const navigate = useNavigate();
   const canvasRef = useRef(null);
   const waveformScrollRef = useRef(null);
+  const logBoxRef = useRef(null);
   const audioRef = useRef(null);
   const animationRef = useRef(null);
   const audioBufferRef = useRef(null); // Store the audio buffer
@@ -50,6 +51,16 @@ export default function EditPage() {
         // detect long-silence regions
         const silentRegions = findSilenceRegions(audioBuffer, 0.01, 1.2);
         audioBufferRef.current.silenceRegions = silentRegions;
+        // Clear any existing logs for a fresh file
+        if (logBoxRef.current) logBoxRef.current.innerHTML = '';
+        // Add a log entry for each detected silence region
+        if (silentRegions && silentRegions.length > 0) {
+          silentRegions.forEach(region => {
+            appendLogEntry(region.startTime, region.endTime, 'Silence');
+          });
+        } else {
+          appendLogMessage('No warnings detected');
+        }
 
         // compute proportional canvas width based on audio duration and clamp it
         const MAX_CANVAS_WIDTH = 2400; // prevents extremely wide canvases that push layout
@@ -273,9 +284,29 @@ export default function EditPage() {
   };
 
   const formatTime = (time) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    // Format as H:MM:SS (hours optional) – match example 0:00:00
+    const totalSeconds = Math.floor(time || 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
+  // Append a formatted message to the log box DOM element
+  const appendLogMessage = (message) => {
+    const box = logBoxRef.current || document.getElementById('logBox');
+    if (!box) return;
+    const msgEl = document.createElement('div');
+    msgEl.className = 'log-entry';
+    msgEl.textContent = message;
+    box.appendChild(msgEl);
+    // Auto-scroll to bottom
+    box.scrollTop = box.scrollHeight;
+  };
+
+  const appendLogEntry = (startTime, endTime, reason) => {
+    const formatted = `${formatTime(startTime)} to ${formatTime(endTime)} - ${reason}`;
+    appendLogMessage(formatted);
   };
 
   return (
@@ -311,7 +342,7 @@ export default function EditPage() {
 
           <div className="log-container">
             <h3>Log</h3>
-            <div className="log-box" id="logBox"></div>
+            <div ref={logBoxRef} className="log-box" id="logBox"></div>
           </div>
 
         </div>

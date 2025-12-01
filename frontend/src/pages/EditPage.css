@@ -210,6 +210,14 @@
   color: #362b4e;
 }
 
+.log-box .log-entry {
+  margin-bottom: 8px;
+  font-size: 13px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+}
+
 /* Scrollbar styling for WebKit browsers (Chrome, Safari, Edge) */
 .waveform-scroll::-webkit-scrollbar,
 .log-box::-webkit-scrollbar {
