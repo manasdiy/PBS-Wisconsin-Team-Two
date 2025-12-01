@@ -51,14 +51,35 @@ export default function EditPage() {
         // detect long-silence regions
         const silentRegions = findSilenceRegions(audioBuffer, 0.01, 1.2);
         audioBufferRef.current.silenceRegions = silentRegions;
+        // detect loud regions (RMS > threshold) — based on audio standards
+        const loudRegions = findLoudRegions(audioBuffer, 0.6, 0.5);
+        audioBufferRef.current.loudRegions = loudRegions;
+        // detect click/distortion regions (clipping or abrupt sample jumps)
+        const clickRegions = findClickRegions(audioBuffer, 0.98, 0.75, 0.01);
+        audioBufferRef.current.clickRegions = clickRegions;
         // Clear any existing logs for a fresh file
         if (logBoxRef.current) logBoxRef.current.innerHTML = '';
-        // Add a log entry for each detected silence region
+        // Add log entries for detected silence regions
         if (silentRegions && silentRegions.length > 0) {
           silentRegions.forEach(region => {
             appendLogEntry(region.startTime, region.endTime, 'Silence');
           });
-        } else {
+        }
+
+        // Add log entries for detected loud regions
+        if (loudRegions && loudRegions.length > 0) {
+          loudRegions.forEach(region => {
+            appendLogEntry(region.startTime, region.endTime, 'Too Loud');
+          });
+        }
+        // Add log entries for detected click/distortion regions
+        if (clickRegions && clickRegions.length > 0) {
+          clickRegions.forEach(region => {
+            appendLogEntry(region.startTime, region.endTime, 'Click');
+          });
+        }
+        // If no silence nor loudness warnings were detected, output a simple message
+        if ((!silentRegions || silentRegions.length === 0) && (!loudRegions || loudRegions.length === 0) && (!clickRegions || clickRegions.length === 0)) {
           appendLogMessage('No warnings detected');
         }
 
@@ -227,6 +248,27 @@ export default function EditPage() {
         context.fillRect(startX, 0, w, canvas.height);
       });
     }
+
+    if (audioBuffer.loudRegions) {
+      context.fillStyle = 'rgba(255, 165, 0, 0.35)';
+      audioBuffer.loudRegions.forEach(region => {
+        const startX = (region.startTime / audioBuffer.duration) * canvas.width;
+        const endX = (region.endTime / audioBuffer.duration) * canvas.width;
+        const w = endX - startX;
+        context.fillRect(startX, 0, w, canvas.height);
+      });
+    }
+
+    if (audioBuffer.clickRegions) {
+      context.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      audioBuffer.clickRegions.forEach(region => {
+        const startX = (region.startTime / audioBuffer.duration) * canvas.width;
+        const endX = (region.endTime / audioBuffer.duration) * canvas.width;
+        const w = Math.max(2, endX - startX);
+        // draw a narrow vertical bar to highlight short clicks
+        context.fillRect(startX, 0, w, canvas.height);
+      });
+    }
   };
 
   const findSilenceRegions = (audioBuffer, silenceThreshold = 0.01, minSilenceSecs = 1.2) => {
@@ -256,6 +298,118 @@ export default function EditPage() {
     }
 
     return silenceRegions;
+  };
+
+  // Detect regions where RMS volume exceeds threshold for at least minLoudSecs
+  // - rmsThreshold is in amplitude (0.0 - 1.0), adjust to fit the audio standard
+  const findLoudRegions = (audioBuffer, rmsThreshold = 0.6, minLoudSecs = 0.5) => {
+    const data = audioBuffer.getChannelData(0);
+    const sampleRate = audioBuffer.sampleRate;
+    const windowSize = Math.floor(0.05 * sampleRate); // 50ms windows
+    const hop = Math.floor(windowSize / 2);
+
+    let loudRegions = [];
+    let idx = 0;
+    const minWindows = Math.ceil((minLoudSecs * sampleRate) / hop);
+
+    const makeWindowRMS = (start) => {
+      let sum = 0;
+      let count = 0;
+      for (let i = start; i < Math.min(start + windowSize, data.length); i++) {
+        const v = data[i];
+        sum += v * v;
+        count++;
+      }
+      if (count === 0) return 0;
+      return Math.sqrt(sum / count);
+    };
+
+    let currentStart = null;
+    let consecutiveWindows = 0;
+
+    for (let start = 0; start < data.length; start += hop) {
+      const rms = makeWindowRMS(start);
+      if (rms >= rmsThreshold) {
+        if (currentStart === null) currentStart = start;
+        consecutiveWindows++;
+      } else {
+        if (currentStart !== null) {
+          // only save if region was long enough
+          if (consecutiveWindows >= minWindows) {
+            const startSample = currentStart;
+            const endSample = start + windowSize;
+            loudRegions.push({
+              startTime: startSample / sampleRate,
+              endTime: Math.min(endSample, data.length) / sampleRate,
+            });
+          }
+          currentStart = null;
+          consecutiveWindows = 0;
+        }
+      }
+    }
+
+    // flush open region at end
+    if (currentStart !== null && consecutiveWindows >= minWindows) {
+      const startSample = currentStart;
+      const endSample = data.length - 1;
+      loudRegions.push({ startTime: startSample / sampleRate, endTime: endSample / sampleRate });
+    }
+
+    return loudRegions;
+  };
+
+  // Detect short clicks or distortion from clipping/abrupt sample jumps
+  const findClickRegions = (audioBuffer, amplitudeThreshold = 0.98, deltaThreshold = 0.75, minClickSecs = 0.01) => {
+    const data = audioBuffer.getChannelData(0);
+    const sampleRate = audioBuffer.sampleRate;
+    const len = data.length;
+    const maxGapSamples = Math.floor(0.02 * sampleRate); // 20ms gap to join impulses
+    const minClickSamples = Math.ceil(minClickSecs * sampleRate);
+
+    let regions = [];
+    let inRegion = false;
+    let regionStart = 0;
+    let lastTrigger = 0;
+
+    for (let i = 1; i < len; i++) {
+      const curr = data[i];
+      const prev = data[i - 1];
+      const absCurr = Math.abs(curr);
+      const absDiff = Math.abs(curr - prev);
+
+      const clipping = absCurr >= amplitudeThreshold;
+      const abrupt = absDiff >= deltaThreshold;
+
+      if (clipping || abrupt) {
+        if (!inRegion) {
+          inRegion = true;
+          regionStart = i - 1;
+        }
+        lastTrigger = i;
+      }
+
+      if (inRegion && (i - lastTrigger) > maxGapSamples) {
+        const regionEnd = lastTrigger;
+        const durationSamples = regionEnd - regionStart;
+        if (durationSamples >= minClickSamples) {
+          regions.push({ startTime: regionStart / sampleRate, endTime: regionEnd / sampleRate });
+        }
+        inRegion = false;
+        regionStart = 0;
+        lastTrigger = 0;
+      }
+    }
+
+    if (inRegion) {
+      const regionEnd = len - 1;
+      const durationSamples = regionEnd - regionStart;
+      if (durationSamples >= minClickSamples) {
+        regions.push({ startTime: regionStart / sampleRate, endTime: regionEnd / sampleRate });
+      }
+    }
+
+    return regions;
   };
 
   const togglePlayPause = () => {
@@ -293,11 +447,11 @@ export default function EditPage() {
   };
 
   // Append a formatted message to the log box DOM element
-  const appendLogMessage = (message) => {
+  const appendLogMessage = (message, typeClass = '') => {
     const box = logBoxRef.current || document.getElementById('logBox');
     if (!box) return;
     const msgEl = document.createElement('div');
-    msgEl.className = 'log-entry';
+    msgEl.className = 'log-entry' + (typeClass ? ` ${typeClass}` : '');
     msgEl.textContent = message;
     box.appendChild(msgEl);
     // Auto-scroll to bottom
@@ -306,7 +460,9 @@ export default function EditPage() {
 
   const appendLogEntry = (startTime, endTime, reason) => {
     const formatted = `${formatTime(startTime)} to ${formatTime(endTime)} - ${reason}`;
-    appendLogMessage(formatted);
+    // Add type-based class so we can style messages (e.g. Silence vs Too Loud)
+    const typeClass = 'log-' + reason.toLowerCase().replace(/\s+/g, '-');
+    appendLogMessage(formatted, typeClass);
   };
 
   return (
